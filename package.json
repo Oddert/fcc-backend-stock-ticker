@@ -15,6 +15,7 @@
     "express": "^4.16.3",
     "mongoose": "^5.2.6",
     "mongoose-findorcreate": "^3.0.0",
+    "mpath": "^0.5.1",
     "request": "^2.87.0"
   },
   "devDependencies": {}
