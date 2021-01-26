@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
+    "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Robyn Veitch",
@@ -18,5 +19,7 @@
     "mpath": "^0.5.1",
     "request": "^2.87.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
 }
