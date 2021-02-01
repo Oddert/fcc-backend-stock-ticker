@@ -1,4 +1,4 @@
-# FCC Backend Message Board
+# FCC Backend Stock Ticker
 
 API based application to query stock levels and add 'likes' based on each device's IP.
 
