@@ -6,7 +6,7 @@ CRUD application built for one of the FreeCodeCamp Backend challanges.
 
 Node / express app built with MongoDB / Mongoose for data persistance
 
-Stock data provided by [IEX Trading](https://iextrading.com/)
+Data provided for free by [IEX](https://iextrading.com/developers). [View IEX’s Terms of Use](https://iextrading.com/apiexhibita/).
 
 ## Live Demo
 [https://oddert-fcc-backend-stock-ticker.glitch.me/](https://oddert-fcc-backend-stock-ticker.glitch.me/)

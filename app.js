@@ -59,7 +59,10 @@ app.get('/api/stock-prices', (req, res) => {
     const ip = req.headers['x-forwarded-for'] ? req.headers['x-forwarded-for'].split(',')[0] : '194.168.0.104';
     console.log(ip);
 
-    request(`https://api.iextrading.com/1.0/stock/market/batch?symbols=${stock}&types=quote`, {
+    // let url = `https://api.iextrading.com/1.0/stock/market/batch?symbols=${stock}&types=quote`
+    let url = `https://api.iextrading.com/1.0/tops?symbols=${stock}`
+
+    request(url, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' }
     }, function (error, responce, body) {
@@ -81,7 +84,8 @@ app.get('/api/stock-prices', (req, res) => {
                   console.log(err);
                   res.json({ err })
                 } else {
-                  foundStock.price = data[stock].quote.latestPrice;
+                  // foundStock.price = data[stock].quote.latestPrice;
+                  foundStock.price = data[0].lastSalePrice
                   if (req.query.like) {
                     console.log('toggling user like');
                     if (foundStock.likes.includes(ip)) {
@@ -99,7 +103,7 @@ app.get('/api/stock-prices', (req, res) => {
                   res.json({
                     stockData: {
                       stock,
-                      price: data[stock].quote.latestPrice,
+                      price: data[0].lastSalePrice,
                       likes: foundStock.likes.length
                     }
                   })
@@ -109,7 +113,7 @@ app.get('/api/stock-prices', (req, res) => {
               console.log('not in db');
               let newStock = {
                 stock,
-                price: data[stock].quote.latestPrice,
+                price: data[0].lastSalePrice,
                 likes: []
               }
               console.log(newStock)
@@ -144,6 +148,13 @@ app.get('/api/stock-prices', (req, res) => {
         const stockOne = req.query.stock[0].toUpperCase();
         const stockTwo = req.query.stock[1].toUpperCase();
 
+        let priceOne, priceTwo
+
+        data.forEach(each => {
+          if (each.symbol === stockOne) priceOne = each.lastSalePrice
+          if (each.symbol === stockTwo) priceTwo = each.lastSalePrice
+        })
+
         Stock.count({ stock: stockOne }, (err, count) => {
           if (err) {
             console.log(err);
@@ -162,12 +173,14 @@ app.get('/api/stock-prices', (req, res) => {
                     foundStockOne.likes.push(ip)
                   }
                 }
-                foundStockOne.price = data[stockOne].quote.latestPrice;
+                // foundStockOne.price = data[stockOne].quote.latestPrice;
+                foundStockOne.price = priceOne
                 foundStockOne.save();
 
                 let oneObject = {
                   stock: stockOne,
-                  price: data[stockOne].quote.latestPrice,
+                  // price: data[stockOne].quote.latestPrice,
+                  price: priceOne,
                   likes: foundStockOne.likes.length
                 }
 
@@ -183,12 +196,14 @@ app.get('/api/stock-prices', (req, res) => {
                         foundStockTwo.likes.push(ip)
                       }
                     }
-                    foundStockTwoprice = data[stockTwo].quote.latestPrice;
+                    // foundStockTwoprice = data[stockTwo].quote.latestPrice;
+                    foundStockTwoprice = priceTwo
                     foundStockTwo.save();
 
                     let twoObject = {
                       stock: stockTwo,
-                      price: data[stockTwo].quote.latestPrice,
+                      // price: data[stockTwo].quote.latestPrice,
+                      price: priceTwo,
                       likes: foundStockTwo.likes.length
                     }
                     res.json({
@@ -205,9 +220,14 @@ app.get('/api/stock-prices', (req, res) => {
         })
 
       } else {
-        var multiData = req.query.stock.map(each => ({
-          stock: data[each.toUpperCase()].quote.symbol.toUpperCase(),
-          price: data[each.toUpperCase()].quote.latestPrice
+        // var multiData = req.query.stock.map(each => ({
+        //   stock: data[each.toUpperCase()].quote.symbol.toUpperCase(),
+        //   price: data[each.toUpperCase()].quote.latestPrice
+        // }))
+
+        const multiData = data.map(each => ({
+          stock: each.symbol,
+          price: each.lastSalePrice
         }))
 
         res.json({
